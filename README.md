@@ -1,5 +1,5 @@
 ### Windows Service Center API wrapper
-The following tool is a helper to access the security providers in Windows Security Center. 
+The following tool is a helper to access the security providers in Windows Security Center. This tool is used with a device script as a [extension](../sdp-extensions) feature in AppGate SDP. 
 
 ### Providers are:
 * Firewall products
