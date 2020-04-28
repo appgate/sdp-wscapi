@@ -92,7 +92,7 @@ The following are possible output states (keywords) which you can expect from th
 
 | field name                     | possible values                  |
 |--------------------------------|----------------------------------|
-| `provider_type`                | Firewall, Antispyware, Antivirus |
+| provider type                  | Firewall, Antispyware, Antivirus |
 | `product_state`                | On, Off, Snoozed, Expired        |
 | `product_status` for AV and AS | Up-to-date, Out-of-date          |
 
