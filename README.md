@@ -9,8 +9,8 @@ For download see [latest release](https://github.com/appgate/sdp-wscapi/releases
 * Anti spyware products
 
 ### The following platforms are supported
-* Windows 8 and upwards
-* Desktop only / 64bit
+* Windows 8 and upwards until The Windows 10 Creators Update (also known as version 1703 and codenamed "Redstone 2")
+* Desktop only x64
 
 ### Usage
 ```
