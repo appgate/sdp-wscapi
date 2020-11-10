@@ -10,7 +10,9 @@ For download see [latest release](https://github.com/appgate/sdp-wscapi/releases
 
 ### The following platforms are supported
 * Windows 8 and upwards until The Windows 10 Creators Update (also known as version 1703 and codenamed "Redstone 2")
-* Desktop only x64
+* Desktop: only x64
+
+Windows is moving to a [Windows Defender Advanced Threat Protection platform (name and product might have changed already)](https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/microsoft-defender-advanced-threat-protection) so this is will be superseeded and the program rendered unusable. The program will let you know when running it.
 
 ### Usage
 ```
