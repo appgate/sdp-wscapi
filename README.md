@@ -1,5 +1,5 @@
 ### Windows Service Center API wrapper
-The following tool is a helper to access the security providers in Windows Security Center. This tool is used with a device script as a [extension](https://github.com/appgate/sdp-extensions) feature in Appgate SDP. 
+The following tool is a helper to access the security providers in Windows Security Center. This tool is used with a device script as a [extension](https://github.com/appgate/sdp-extensions) feature in Appgate SDP.
 
 For download see [latest release](https://github.com/appgate/sdp-wscapi/releases/latest).
 
@@ -8,24 +8,24 @@ For download see [latest release](https://github.com/appgate/sdp-wscapi/releases
 * Anti virus products
 * Anti spyware products
 
-### The following platforms are supported
-* Windows 8 and upwards until The Windows 10 Creators Update (also known as version 1703 and codenamed "Redstone 2")
-* Desktop: only x64
+### Platform support
+* Binary should run on Windows 10 and upwards, x64 only
+* Desktop only
 
 Windows is moving to a [Windows Defender Advanced Threat Protection platform (name and product might have changed already)](https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/microsoft-defender-advanced-threat-protection) so this is will be superseeded and the program rendered unusable. The program will let you know when running it.
 
 ### Usage
 ```
 $ ./agwscapi.exe
-Usage: wscapi.exe [-av | -as | -fw]
+Usage: agwscapi.exe [-av | -as | -fw]
    av: Query Antivirus programs
    as: Query Antispyware programs
    fw: Query Firewall programs
-Exe build date: Mar 30 2020
-Exe build time: 21:06:56
+
+Built: Jan  9 2023 17:50:01
 ```
 
-You can specify multiple flags 
+You can specify multiple flags
 
 ### Example output multiple flags
 ```
@@ -72,7 +72,8 @@ $ ./agwscapi.exe -fw -av -as |jq
       "product_name": "Windows Defender",
       "product_state": "Off",
       "product_status": "Up-to-date",
-      "remediation_path": "%ProgramFiles%\\Windows Defender\\MSASCui.exe"
+      "remediation_path": "%ProgramFiles%\\Windows Defender\\MSASCui.exe",
+      "product_state_timestamp":"Mon, 09 Jan 2023 19:19:12 GMT"
     },
     {
       "product_name": "CylancePROTECT",
@@ -99,6 +100,7 @@ The following are possible output states (keywords) which you can expect from th
 | provider type                  | Firewall, Antispyware, Antivirus |
 | `product_state`                | On, Off, Snoozed, Expired        |
 | `product_status` for AV and AS | Up-to-date, Out-of-date          |
+| `product_state_timestamp`      | A timestamp                      |
 
 
 

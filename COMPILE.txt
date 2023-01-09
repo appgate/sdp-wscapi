@@ -1,0 +1,4 @@
+Apply the included patch on top of:
+
+  https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/WebSecurityCenter/cpp
+
