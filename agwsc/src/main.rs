@@ -5,21 +5,25 @@ use windows::Win32::System::Com::{
 };
 use windows::Win32::System::SecurityCenter::*;
 
-unsafe fn umain(provider: WSC_SECURITY_PROVIDER) -> windows::core::Result<JsonValue> {
+fn unwrap(s: Result<windows::core::BSTR, windows::core::Error>) -> String {
+    match s {
+        Ok(s) => s.to_string(),
+        _ => "<Unknown>".into(),
+    }
+}
+
+unsafe fn get_products(provider: WSC_SECURITY_PROVIDER) -> windows::core::Result<JsonValue> {
     let pl: IWSCProductList = CoCreateInstance(&WSCProductList, None, CLSCTX_ALL)?;
     pl.Initialize(provider)?;
     let n = pl.Count().unwrap_or(0) as u32;
     let mut products = Vec::new();
     for i in 0..n {
-        let mut product: HashMap<String, JsonValue> = HashMap::new();
-        let p = pl.get_Item(i);
-        if p.is_err() {
+        let Ok(p) = pl.get_Item(i) else {
             continue;
-        }
-        let p = p.unwrap();
+        };
 
-        let name = format!("{}", p.ProductName().unwrap_or("<Unknown>".into()));
-        product.insert("product_name".into(), name.into());
+        let mut product: HashMap<String, JsonValue> = HashMap::new();
+        product.insert("product_name".into(), unwrap(p.ProductName()).into());
 
         let state = match p.ProductState() {
             Ok(WSC_SECURITY_PRODUCT_STATE_OFF) => "Off",
@@ -30,8 +34,10 @@ unsafe fn umain(provider: WSC_SECURITY_PROVIDER) -> windows::core::Result<JsonVa
         };
         product.insert("product_state".into(), state.to_string().into());
 
-        let remediation_path = format!("{}", p.RemediationPath().unwrap_or("<Unknown>".into()));
-        product.insert("remediation_path".into(), remediation_path.into());
+        product.insert(
+            "remediation_path".into(),
+            unwrap(p.RemediationPath()).into(),
+        );
 
         if provider != WSC_SECURITY_PROVIDER_FIREWALL {
             let status = match p.SignatureStatus() {
@@ -42,12 +48,12 @@ unsafe fn umain(provider: WSC_SECURITY_PROVIDER) -> windows::core::Result<JsonVa
         }
 
         if provider == WSC_SECURITY_PROVIDER_ANTIVIRUS {
-            let timestamp = format!(
-                "{}",
-                p.ProductStateTimestamp().unwrap_or("<Unknown>".into())
+            product.insert(
+                "product_state_timestamp".into(),
+                unwrap(p.ProductStateTimestamp()).into(),
             );
-            product.insert("product_state_timestamp".into(), timestamp.into());
         }
+
         products.push(JsonValue::from(product));
     }
 
@@ -56,7 +62,7 @@ unsafe fn umain(provider: WSC_SECURITY_PROVIDER) -> windows::core::Result<JsonVa
 
 fn usage() {
     println!(
-        "Usage: agwscapi.exe [-av | -as | -fw]
+        "Usage: agwsc.exe [-av | -as | -fw]
     av: Query Antivirus programs
     as: Query Antispyware programs
     fw: Query Firewall programs"
@@ -81,7 +87,9 @@ fn main() -> windows::core::Result<()> {
                 return Ok(());
             }
         };
-        json.insert(key.into(), unsafe { umain(val)? });
+        if let Ok(val) = unsafe { get_products(val) } {
+            json.insert(key.into(), val);
+        }
     }
 
     print!("{}", JsonValue::from(json).stringify().unwrap());
