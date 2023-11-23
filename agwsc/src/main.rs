@@ -7,7 +7,7 @@ use windows::Win32::System::SecurityCenter::*;
 
 fn unwrap(s: Result<windows::core::BSTR, windows::core::Error>) -> String {
     match s {
-        Ok(s) => s.to_string(),
+        Ok(s) => s.to_string().replace(|c: char| !c.is_ascii(), "?"),
         _ => "<Unknown>".into(),
     }
 }
