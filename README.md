@@ -16,20 +16,18 @@ Windows is moving to a [Windows Defender Advanced Threat Protection platform (na
 
 ### Usage
 ```
-$ ./agwscapi.exe
-Usage: agwscapi.exe [-av | -as | -fw]
+$ ./agwsc.exe
+Usage: agwsc.exe [-av | -as | -fw]
    av: Query Antivirus programs
    as: Query Antispyware programs
    fw: Query Firewall programs
-
-Built: Jan  9 2023 17:50:01
 ```
 
 You can specify multiple flags
 
 ### Example output multiple flags
 ```
-$ ./agwscapi.exe -fw -av -as |jq
+$ ./agwsc.exe -fw -av -as |jq
 {
   "Antispyware": [
     {

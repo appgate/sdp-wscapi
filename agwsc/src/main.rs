@@ -60,13 +60,16 @@ unsafe fn get_products(provider: WSC_SECURITY_PROVIDER) -> windows::core::Result
     Ok(JsonValue::from(products))
 }
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 fn usage() {
     println!(
         "Usage: agwsc.exe [-av | -as | -fw]
     av: Query Antivirus programs
     as: Query Antispyware programs
-    fw: Query Firewall programs"
-    );
+    fw: Query Firewall programs
+
+Version: {}", VERSION);
 }
 
 fn main() -> windows::core::Result<()> {
