@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-use tinyjson::JsonValue;
+use indexmap::IndexMap;
 use windows::Win32::System::Com::{
     CoCreateInstance, CoInitializeEx, CLSCTX_ALL, COINIT_APARTMENTTHREADED,
 };
@@ -14,7 +13,7 @@ fn unwrap(s: Result<windows::core::BSTR, windows::core::Error>, filter: bool) ->
     }
 }
 
-unsafe fn get_products(provider: WSC_SECURITY_PROVIDER, filter: bool) -> windows::core::Result<JsonValue> {
+unsafe fn get_products(provider: WSC_SECURITY_PROVIDER, filter: bool) -> windows::core::Result<Vec<IndexMap<String, String>>> {
     let pl: IWSCProductList = CoCreateInstance(&WSCProductList, None, CLSCTX_ALL)?;
     pl.Initialize(provider)?;
     let n = pl.Count().unwrap_or(0) as u32;
@@ -24,7 +23,7 @@ unsafe fn get_products(provider: WSC_SECURITY_PROVIDER, filter: bool) -> windows
             continue;
         };
 
-        let mut product: HashMap<String, JsonValue> = HashMap::new();
+        let mut product: IndexMap<String, String> = IndexMap::new();
         product.insert("product_name".into(), unwrap(p.ProductName(), filter).into());
 
         let state = match p.ProductState() {
@@ -56,10 +55,10 @@ unsafe fn get_products(provider: WSC_SECURITY_PROVIDER, filter: bool) -> windows
             );
         }
 
-        products.push(JsonValue::from(product));
+        products.push(product);
     }
 
-    Ok(JsonValue::from(products))
+    Ok(products)
 }
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -75,8 +74,8 @@ Version: {}", VERSION);
 }
 
 fn main() -> windows::core::Result<()> {
-    unsafe { CoInitializeEx(None, COINIT_APARTMENTTHREADED)? };
-    let mut json = HashMap::new();
+    let _ = unsafe { CoInitializeEx(None, COINIT_APARTMENTTHREADED) };
+    let mut json: IndexMap<String, _> = IndexMap::new();
     let args: Vec<_> = std::env::args().collect();
     if args.len() <= 1 {
         usage();
@@ -107,6 +106,6 @@ fn main() -> windows::core::Result<()> {
         }
     }
 
-    print!("{}", JsonValue::from(json).stringify().unwrap());
+    print!("{}", serde_json::to_string(&json).unwrap());
     Ok(())
 }
